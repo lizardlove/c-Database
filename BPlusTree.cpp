@@ -1,9 +1,12 @@
 #include <iostream>
 #include <stdlib.h>
 #include <list>
+#include <string.h>
+#include <string>
 #include <algorithm>
 #include "BPlusTree.h"
 
+using std::string;
 using std::swap;
 using std::binary_search;
 using std::lower_bound;
