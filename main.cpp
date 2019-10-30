@@ -9,6 +9,7 @@
 #include <time.h> 
 #include <pthread.h>
 #include "table.h"
+using namespace bpt;
 using namespace std;
 
 #define NUM_THREADS 5
@@ -22,8 +23,8 @@ clock_t startTime,finishTime;
 void initialSystem();
 void printOperatorMessage();
 void selectCommand();
-void printInfo(Table *tablePtr);
-int insertRandomRecord(Table *tablePtr, int num);
+void printInfo(Table* tablePtr);
+int insertRandomRecord(Table* tablePtr, int num);
 int searchRecord(Table* tablePtr, ll col, ll min, ll max, vector<ll> &searchResult);
 int checkRecord(Table* tablePtr, ll row,  ll col = -1);
 int initIndex(Table* tablePtr, ll col);
@@ -81,7 +82,6 @@ void selectCommand() {
                 vector<ll> searchResult;
                 int operatorCode = searchRecord(zxyPtr, column, min, max, searchResult);
                 finishTime = clock();
-                cout << operatorCode << endl;
                 if (operatorCode == 1 && searchResult.size() > 0) {
 
                     cout << "search successful, time: " << durationTime(&finishTime, &startTime) << " seconds\n";
@@ -131,14 +131,14 @@ void selectCommand() {
     }
 }
 
-int insertRandomRecord(Table *tablePtr, int num) {
+int insertRandomRecord(Table* tablePtr, int num) {
     srand((unsigned)time(NULL));
     int flag = 0;
     for (int i = 0; i < num; i++) {
         vector<ll> data;
         ll s;
         for (int j = 0; j < tablePtr->colLen; j++) {
-            s = rand() % 1000;
+            s = rand() % 500000;
             data.push_back(s);
         }
         if (zxyPtr->append(data) == 0) {
@@ -154,9 +154,10 @@ int insertRandomRecord(Table *tablePtr, int num) {
     }
 }
 
-void printInfo(Table *tablePtr) {
+void printInfo(Table* tablePtr) {
     cout << "table's name: " << tablePtr->name << endl
-         << "there is " << tablePtr->count << " record" << endl << nextLineHeader;
+         << "there is " << tablePtr->count << " record" << endl 
+         << nextLineHeader;
 }
 
 int searchRecord(Table* tablePtr, ll col, ll min, ll max, vector<ll> &searchResult) {
@@ -182,7 +183,8 @@ int checkRecord(Table* tablePtr, ll row, ll col) {
 int initIndex(Table* tablePtr, ll col) {
     
     tablePtr->initIndex(col);
-
+    bpt::meta_t ptr = (*(*tablePtr).bptBox[col]).meta;
+    cout << "index: " << ptr.leaf_node_num << endl;
     return 1;
 }
 

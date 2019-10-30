@@ -38,7 +38,7 @@ namespace bpt {
         size_t key_size;   /* size of key */
 
         size_t internal_node_num; /* 内部节点个数 */
-        size_t leaf_node_num;     /* 叶节点个数 */
+        int leaf_node_num;     /* 叶节点个数 */
         size_t height;            /* 树高度 */
         off_t slot;        /* 新块的位置（物理） */
         off_t root_offset; /* 根节点位置 */

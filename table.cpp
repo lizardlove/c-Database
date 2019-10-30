@@ -6,6 +6,7 @@
 #include "table.h"
 
 using namespace bpt;
+using namespace std;
 
 #define ll long long
 
@@ -129,13 +130,11 @@ int Table::createTable(const char *table_name, vector<ll> col_name){
             sprintf(path, "./IndexPacket/%lld.bin", colName[i]);
             if (is_file_exist(path)) {
                 BPlusTree ptr(path, 0);
-                bptBox[colName[i]] = &ptr;
-                // cout << "index-"<< path << "exist" << endl;
+                bptBox[i] = &ptr;
+                cout << "index- "<< path << " exist" << endl;
+                cout << bptBox[i]->meta.leaf_node_num << endl;
                 indexExist = true;
             }
-        }
-        if (!indexExist) {
-            // cout << "index doesn't exist." << endl;
         }
 
     }
@@ -176,21 +175,45 @@ void Table::initIndex(const ll col) {
             ptr.insert(dataCp[i][col], i);
         }
     }
-
     bptBox[col] = &ptr;
-
+    std::cout << (*bptBox[col]).meta.leaf_node_num << std::endl;
 }
 
+bool Table::checkIndex(const ll col, BPlusTree *ptr) {
+    char path[24] = { 0 };
+    sprintf(path, "./IndexPacket/%lld.bin", col);
+    if (is_file_exist(path)) {
+        BPlusTree bptPtr(path, 0);
+        ptr = &bptPtr;
+        cout << "index- "<< path << " exist" << endl;
+        cout << ptr->meta.leaf_node_num << endl;
+        return true;
+    }
+    return false;
+    
+}
 
 int Table::search(const ll col, ll min, ll max, vector<ll> &result) {
     bool rangeSearch = !(min == max);
-    if (bptBox[col]) { //存在索引表
+    BPlusTree *ptr;
+    bool indexExist = false;
+    char path[24] = { 0 };
+    sprintf(path, "./IndexPacket/%lld.bin", col);
+    if (is_file_exist(path)) {
+        BPlusTree bptPtr(path, 0);
+        ptr = &bptPtr;
+        indexExist = true;
+    }
+    if (indexExist) { //存在索引表
+        std::cout << "exist index" << std::endl;
+        cout << ptr->meta.leaf_node_num << endl;
         ll values[MAXRANGE];
         int flag;
         if (rangeSearch) { //范围搜索
-            flag = (*bptBox[col]).search_range(min, max, values, MAXRANGE);
+            flag = (*ptr).search_range(min, max, values, MAXRANGE);
         } else {  //单例搜索
-            flag = (*bptBox[col]).search(min, values, MAXRANGE);
+            std::cout << "单例搜索" << std::endl;
+            flag = (*ptr).search(min, values, MAXRANGE);
         }
         if (flag) {
             for (ll i = 0; i < MAXRANGE; i++) {
@@ -200,6 +223,7 @@ int Table::search(const ll col, ll min, ll max, vector<ll> &result) {
             }
         }
     } else { //没有索引表，遍历搜索
+        std::cout << "doesn't index" << std::endl;
         for (ll i = 0; i < dataCp.size(); i++) {
             if (rangeSearch && (dataCp[i][col] >= min && dataCp[i][col] <= max)) {
                 result.push_back(i);

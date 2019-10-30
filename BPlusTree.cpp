@@ -47,8 +47,7 @@ namespace bpt {
             if(map(&meta, OFFSET_META) != 0) {
                 force_empty = true;
             }
-        }
-        if (force_empty) {
+        } else if (force_empty) {
             //文件不存在
             open_file();
             init_from_empty();
@@ -60,7 +59,6 @@ namespace bpt {
     {
         leaf_node_t leaf;
         map(&leaf, search_leaf(key));
-
         // 搜索记录节点
         int j, i = 0;
         record_t *record;
@@ -83,6 +81,7 @@ namespace bpt {
             }
             j++;
         }
+
         if (i == 0) {
             return -1; 
         } else {
@@ -263,7 +262,7 @@ namespace bpt {
             insert_record_no_split(&leaf, key, value);
             unmap(&leaf, offset);
         }
-
+        unmap(&meta, OFFSET_META);
         return 0;
     }
 

@@ -52,6 +52,8 @@ class Table
         /* 插入数据 */
         int append(vector<ll> line);
 
+        bool checkIndex(const ll col, BPlusTree *ptr);
+
         /* 按键值新建索引表 */
         void initIndex(const ll col);
         /* 单项搜索 */
