@@ -131,8 +131,6 @@ int Table::createTable(const char *table_name, vector<ll> col_name){
             if (is_file_exist(path)) {
                 BPlusTree ptr(path, 0);
                 bptBox[i] = &ptr;
-                cout << "index- "<< path << " exist" << endl;
-                cout << bptBox[i]->meta.leaf_node_num << endl;
                 indexExist = true;
             }
         }
@@ -176,7 +174,6 @@ void Table::initIndex(const ll col) {
         }
     }
     bptBox[col] = &ptr;
-    std::cout << (*bptBox[col]).meta.leaf_node_num << std::endl;
 }
 
 bool Table::checkIndex(const ll col, BPlusTree *ptr) {
